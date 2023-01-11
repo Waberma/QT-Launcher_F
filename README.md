@@ -30,3 +30,16 @@ connect(this, &MainWindow::MainPagesignal, mainpage, &MainPage::menuActions);
 ```Cplusplus 
 connect(pbPlusMin,SIGNAL(clicked()), this, SLOT(PlusMin()));
 ```
+
+## Connect in diff Thread
+```Cplusplus
+connect(this, &Pagination::GetNewNextEl, nextpagethr, &NewElementsthr::GetNewNextEl, Qt::DirectConnection);
+```
+
+### QTabWidget AddTab and setCurrent
+```Cplusplus 
+ui->tabWidget->addTab(personpage,"Пользователи");
+ui->tabWidget->setCurrentWidget(personpage);
+``` 
+
+### QThread
