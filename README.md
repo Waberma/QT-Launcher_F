@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # QT-Launcher
 =======
 # QT-Launcher
