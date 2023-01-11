@@ -31,6 +31,11 @@ connect(this, &MainWindow::MainPagesignal, mainpage, &MainPage::menuActions);
 connect(pbPlusMin,SIGNAL(clicked()), this, SLOT(PlusMin()));
 ```
 
+### Connect with QList
+```Cplusplus 
+connect(mainpage, &MainPage::StartCreateMenu, this,  static_cast<void (MainWindow::*)(QList<QString> rolelist)> (&MainWindow::StartCreateMenu));
+```
+
 ## Connect in diff Thread
 ```Cplusplus
 connect(this, &Pagination::GetNewNextEl, nextpagethr, &NewElementsthr::GetNewNextEl, Qt::DirectConnection);
@@ -43,3 +48,11 @@ ui->tabWidget->setCurrentWidget(personpage);
 ``` 
 
 ### QThread
+```Cplusplus 
+secondthread = new QThread(this);
+nextpagethr->moveToThread(secondthread);
+```
+### CornerWidget
+```Cplusplus 
+ui->menubar->setCornerWidget(cornerMenu);
+```
