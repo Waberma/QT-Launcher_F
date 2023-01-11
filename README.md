@@ -36,23 +36,29 @@ connect(pbPlusMin,SIGNAL(clicked()), this, SLOT(PlusMin()));
 connect(mainpage, &MainPage::StartCreateMenu, this,  static_cast<void (MainWindow::*)(QList<QString> rolelist)> (&MainWindow::StartCreateMenu));
 ```
 
-## Connect in diff Thread
+### Connect in diff Thread
 ```Cplusplus
 connect(this, &Pagination::GetNewNextEl, nextpagethr, &NewElementsthr::GetNewNextEl, Qt::DirectConnection);
 ```
 
-### QTabWidget AddTab and setCurrent
+## QTabWidget AddTab and setCurrent
 ```Cplusplus 
 ui->tabWidget->addTab(personpage,"Пользователи");
 ui->tabWidget->setCurrentWidget(personpage);
 ``` 
 
-### QThread
+## QThread
 ```Cplusplus 
 secondthread = new QThread(this);
 nextpagethr->moveToThread(secondthread);
 ```
-### CornerWidget
+## CornerWidget
 ```Cplusplus 
 ui->menubar->setCornerWidget(cornerMenu);
+```
+
+## QSqlQuery
+### QSqlRecord
+```Cplusplus
+cornerMenuq->value(cornerMenuq->record().indexOf("Name")).toString();
 ```
