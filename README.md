@@ -2,6 +2,7 @@
 
 ## QSqlDatabase
 
+### Connect Database
 ```Cplusplus
 db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("./menu.db");
