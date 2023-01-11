@@ -62,3 +62,4 @@ ui->menubar->setCornerWidget(cornerMenu);
 ```Cplusplus
 cornerMenuq->value(cornerMenuq->record().indexOf("Name")).toString();
 ```
+#### Name - ColumnName
