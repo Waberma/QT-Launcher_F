@@ -1,4 +1,16 @@
 # QT-Launcher
-=======
-# QT-Launcher
->>>>>>> 9f7d423 (First)
+
+## QSqlDatabase
+
+```Cplusplus
+db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("./menu.db");
+    if(db.open())
+    {
+        qDebug("DB Open");
+    }
+    else
+    {
+        qDebug("NoOpen");
+    }
+```
