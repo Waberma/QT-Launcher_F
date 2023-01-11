@@ -26,7 +26,7 @@ connect(mainpage,  &MainPage::setUser, rolepage, &RolePage::SetUser);
 connect(this, &MainWindow::MainPagesignal, mainpage, &MainPage::menuActions);
 ```
 
-#Connect butt
+###Connect butt
 ```Cplusplus 
 connect(pbPlusMin,SIGNAL(clicked()), this, SLOT(PlusMin()));
 ```
