@@ -1,5 +1,17 @@
 # QT-Launcher
-
+# C++
+## Pointers
+### Pointer-to-function
+```Cplusplus
+    typedef void(*fun)(); // Please do this!
+    fun f = foo;
+```
+### Pointer-to-member-function
+```Cplusplus
+    typedef  void (CalculateMainWindow::*calcSlot)();  // Please do this!
+    QList<calcSlot> calcSlots;
+```
+# QT
 ## QSqlDatabase
 
 ### Connect Database
