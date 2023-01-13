@@ -2,6 +2,7 @@
 #define CALCULATEMAINWINDOW_H
 
 #include <QWidget>
+#include <functional>
 #include <QFunctionPointer>
 class QPushButton;
 class QLCDNumber;
@@ -18,10 +19,15 @@ public:
     //~CalculateMainWindow();
     void MenuActions(QString action);
 
-    typedef void (*fp)();
-    QList<fp> calcSlots;
+    //pointer-to-member-function
+    typedef  void (CalculateMainWindow::*calcSlot)();  // Please do this!
+    QList<void (CalculateMainWindow::*)()> calcSlots;
+
+
 signals:
-    void inStatusBar(QString);
+    void StatusBar(QString);
+    void setSlots(QList<void (CalculateMainWindow::*)()> calcSlots);
+
 private:
     void CreateWidget();
     QString NextNum;
@@ -55,9 +61,10 @@ private slots:
     void PlusMin();
     void ClearDisplay();
     void TapPoint();
+public slots:
+    void getSlots();
     void tab7();
     void takeFromKeyboard();
-
 };
 
 #endif // CALCULATEMAINWINDOW_H

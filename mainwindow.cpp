@@ -46,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
     menupage = new Menupage;
     pagin = new Pagination;
     calc = new CalculateMainWindow;
+
+    QList<QObject *> widlist;
+    widlist.push_back(calc);
+
     //Связи с RolePage
     connect(rolepage, &RolePage::statusBar, this, &MainWindow::inStatusBar);
     connect(rolepage, &RolePage::StartCreateMenu, this,  static_cast<void (MainWindow::*)(QList<QString> rolelist)> (&MainWindow::StartCreateMenu));
@@ -65,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mainpage, &MainPage::StartCreateMenu, this,  static_cast<void (MainWindow::*)(QList<QString> rolelist)> (&MainWindow::StartCreateMenu));
 
     //Связи с MenuPage
-    connect(mainpage,  &MainPage::setUser, menupage, &Menupage::SetUser);
+    connect(mainpage, &MainPage::setUser, menupage, &Menupage::SetUser);
     connect(menupage, &Menupage::statusBar, this, &MainWindow::inStatusBar);
     connect(menupage, &Menupage::StartCreateMenu, this,  static_cast<void (MainWindow::*)(QList<QString> rolelist)> (&MainWindow::StartCreateMenu));
 
@@ -75,7 +79,14 @@ MainWindow::MainWindow(QWidget *parent)
     SetCornerMenu();
 
     //Связи с CalculateMainWindow
-    connect(calc, &CalculateMainWindow::inStatusBar, this, &MainWindow::inStatusBar);
+    connect(calc, &CalculateMainWindow::StatusBar, this, &MainWindow::inStatusBar);
+    connect(calc, &CalculateMainWindow::setSlots, this, &MainWindow::getSlots);
+    connect(this, &MainWindow::setSlots, calc, &CalculateMainWindow::getSlots);
+
+    //connect(this, SIGNAL(setSlots()), widlist.at(0), SLOT(getSlots()));
+    //connect(widlist.at(0), SIGNAL(setSlots(QList<void (*widlist.at(0)::*)()>)), this, SLOT(getSlots(QList<void (*widlist.at(0)::*)()>)));
+
+
 }
 
 MainWindow::~MainWindow()
@@ -170,16 +181,19 @@ void MainWindow::menuActions()
     {
         if(calc->isHidden())
         {
+            emit setSlots();
             ui->tabWidget->addTab(calc, "Калькулятор");
             ui->tabWidget->setCurrentWidget(calc);
             QMenu *menu = new QMenu(NULL);
             ui->menubar->addMenu(AddAppMenu(0,menu,"Calculate"));
+
         }
     }
     if(action->text() == "Ввести 7")
     {
-        connect(this, &MainWindow::otherAppMenuAction, calc, &CalculateMainWindow::MenuActions);
+        connect(this, &MainWindow::otherAppMenuAction, calc, foreignSlots.at(0));
         emit otherAppMenuAction(action->text());
+
     }
 }
 
@@ -390,4 +404,9 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     ui->menubar->clear();
     SetCornerMenu();
     StartCreateMenu(rolelist);
+}
+
+void MainWindow::getSlots(QList<void (CalculateMainWindow::*)()> calcSlots)
+{
+    foreignSlots = calcSlots;
 }

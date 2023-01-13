@@ -12,9 +12,13 @@
 #include <QPalette>
 #include <QDebug>
 #include <QFunctionPointer>
+#include <functional>
 
 
-typedef void (*fp)();
+void foo()
+{
+    return;
+}
 
 
 void CalculateMainWindow::CreateWidget()
@@ -129,6 +133,8 @@ void CalculateMainWindow::CreateWidget()
     pbDiv->setCheckable(true);
     pbMult->setCheckable(true);
 
+    calcSlots.push_back(&CalculateMainWindow::tab7);
+    calcSlots.push_back(&CalculateMainWindow::takeFromKeyboard);
 
 }
 
@@ -304,21 +310,18 @@ void CalculateMainWindow::tab7()
 
 void CalculateMainWindow::takeFromKeyboard()
 {
-    emit inStatusBar("Ввод с клавиатуры");
+    emit StatusBar("Ввод с клавиатуры");
+}
+
+void CalculateMainWindow::getSlots()
+{
+    emit setSlots(calcSlots);
 }
 
 void CalculateMainWindow::MenuActions(QString action)
 {
-    if(action == "Ввод с клавиатуры")
-    {
-
-    }
-    if(action == "Адрес окна")
-    {
-        emit inStatusBar(pb1->text());
-    }
     if(action == "Ввести 7")
     {
-
+        pb7->click();
     }
 }

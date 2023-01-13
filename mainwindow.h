@@ -25,15 +25,18 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    typedef  void (CalculateMainWindow::*calcSlot)();  // Please do this!
 signals:
     void openDB(QString);
     void MainPagesignal(QString);
     void openOption();
     void otherAppMenuAction(QString);
+    void setSlots();
 
 public slots:
     void inStatusBar(QString info);
 
+    void getSlots(QList<void (CalculateMainWindow::*)()> calcSlots);
 
 private slots:
     void bd_clicked();
@@ -43,6 +46,9 @@ private slots:
     void menuActions();
 
     void on_tabWidget_tabCloseRequested(int index);
+
+
+
 
 private:
     Ui::MainWindow *ui;
@@ -87,5 +93,7 @@ private:
     void ClearWindow();
     QAction *PassChangerAction;
     QAction *RegAction;
+
+    QList<void (CalculateMainWindow::*)()> foreignSlots;
 };
 #endif // MAINWINDOW_H
