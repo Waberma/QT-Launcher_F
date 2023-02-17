@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <functional>
 #include <QFunctionPointer>
+#include <QMenu>
+#include <QAction>
 class QPushButton;
 class QLCDNumber;
 class QSignalMapper;
@@ -22,11 +24,13 @@ public:
     //pointer-to-member-function
     typedef  void (CalculateMainWindow::*calcSlot)();  // Please do this!
     QList<void (CalculateMainWindow::*)()> calcSlots;
-
+    QMap<QString, calcSlot> slotmap;
 
 signals:
     void StatusBar(QString);
     void setSlots(QList<void (CalculateMainWindow::*)()> calcSlots);
+    void sendParent(QObject *);
+    void sendAction(QAction *);
 
 private:
     void CreateWidget();
@@ -62,9 +66,11 @@ private slots:
     void ClearDisplay();
     void TapPoint();
 public slots:
-    void getSlots();
+    void getSlots(QString a);
     void tab7();
     void takeFromKeyboard();
+    void parent();
+    void action(QString);
 };
 
 #endif // CALCULATEMAINWINDOW_H

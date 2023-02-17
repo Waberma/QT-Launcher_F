@@ -24,6 +24,7 @@ SOURCES += \
     mainpage.cpp \
     mainwindow.cpp \
     menupage.cpp \
+    outapp.cpp \
     pagination.cpp \
     paginationoption.cpp \
     personpage.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     adminpage.h \
     adminrole.h \
     menupage.h \
+    outapp.h \
     pagination.h \
     paginationoption.h \
     calc.h \
@@ -49,6 +51,7 @@ FORMS += \
     mainpage.ui \
     mainwindow.ui \
     menupage.ui \
+    outapp.ui \
     pagination.ui \
     paginationoption.ui \
     personpage.ui \

@@ -12,6 +12,7 @@
 #include "pagination.h"
 #include "calc.h"
 #include "tablevier.h"
+#include "outapp.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,12 +32,17 @@ signals:
     void MainPagesignal(QString);
     void openOption();
     void otherAppMenuAction(QString);
-    void setSlots();
+    void setSlots(QString);
+    void getParent();
+    void createaction(QString);
 
 public slots:
     void inStatusBar(QString info);
 
-    void getSlots(QList<void (CalculateMainWindow::*)()> calcSlots);
+    void takeparent(QObject *);
+
+    void takeaction(QAction *);
+
 
 private slots:
     void bd_clicked();
@@ -82,10 +88,14 @@ private:
     Menupage *menupage;
     Pagination *pagin;
     CalculateMainWindow *calc;
+    OutApp *OA;
 
     QMenu* createMenu(int ID, QMenu *menu);
     QMenu* createMenu(int ID, QMenu *menu, QList<QString> rolelist);
     QMenu* AddAppMenu(int ID, QMenu *menu,QString appname);
+    QMenu* AddAppMenu(QString, QMenu *menu);
+    QObject* outerparent;
+    QAction* outeraction;
     void SetCornerMenu();
     void StartCreateMenu();
     void StartCreateMenu(QList<QString> rolelist);
@@ -94,6 +104,6 @@ private:
     QAction *PassChangerAction;
     QAction *RegAction;
 
-    QList<void (CalculateMainWindow::*)()> foreignSlots;
+    void makeConnectionForOutapp(QObject *app);
 };
 #endif // MAINWINDOW_H

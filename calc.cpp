@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QFunctionPointer>
 #include <functional>
-
+#include <typeinfo>
 
 void foo()
 {
@@ -133,6 +133,9 @@ void CalculateMainWindow::CreateWidget()
     pbDiv->setCheckable(true);
     pbMult->setCheckable(true);
 
+
+    slotmap.insert("Нажать 7", &CalculateMainWindow::tab7);
+    slotmap.insert("Ввод с клавиатуры", &CalculateMainWindow::takeFromKeyboard);
     calcSlots.push_back(&CalculateMainWindow::tab7);
     calcSlots.push_back(&CalculateMainWindow::takeFromKeyboard);
 
@@ -313,7 +316,30 @@ void CalculateMainWindow::takeFromKeyboard()
     emit StatusBar("Ввод с клавиатуры");
 }
 
-void CalculateMainWindow::getSlots()
+void CalculateMainWindow::parent()
+{
+    auto *parent = new QObject();
+    QList<QString> MenActions;
+    MenActions.append("Калькулятор");
+    MenActions.append("Калькулятор/Клавиатура/Нажать 7/");
+    MenActions.append("Калькулятор/Ввод с клавиатуры/");
+
+    for (std::size_t i = 0; i < MenActions.size(); ++i) {
+        auto obj = new QObject(parent);
+        if(i < MenActions.size())
+            obj->setObjectName(MenActions.at(i));
+    }
+    sendParent(parent);
+}
+
+void CalculateMainWindow::action(QString name)
+{
+    QAction *action = new QAction(name, this);
+    connect(action, &QAction::triggered, this, slotmap.value(name));
+    sendAction(action);
+}
+
+void CalculateMainWindow::getSlots(QString a)
 {
     emit setSlots(calcSlots);
 }

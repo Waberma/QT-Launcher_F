@@ -15,10 +15,19 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QVariant>
+#include <typeinfo>
 //Модели и интервью
-//
-//Пагинация
 
+bool isIn(QList<QString> &list, QString el)
+{
+    for(size_t i = 0; i < list.size(); i++)
+    {
+        if(list.at(i) == el)
+        {
+            return true;
+        }
+    }
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -46,9 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     menupage = new Menupage;
     pagin = new Pagination;
     calc = new CalculateMainWindow;
-
-    QList<QObject *> widlist;
-    widlist.push_back(calc);
+    OA = new OutApp;
 
     //Связи с RolePage
     connect(rolepage, &RolePage::statusBar, this, &MainWindow::inStatusBar);
@@ -79,14 +86,20 @@ MainWindow::MainWindow(QWidget *parent)
     SetCornerMenu();
 
     //Связи с CalculateMainWindow
+//    connect(this, SIGNAL(getParent()), calc, SLOT(parent()));
+//    connect(calc, SIGNAL(sendParent(QObject*)), this, SLOT(takeparent(QObject*)));
+//    connect(this, SIGNAL(createaction(QString)), calc, SLOT(action(QString)));
+//    connect(calc, SIGNAL(sendAction(QAction*)), this, SLOT(takeaction(QAction*)));
     connect(calc, &CalculateMainWindow::StatusBar, this, &MainWindow::inStatusBar);
-    connect(calc, &CalculateMainWindow::setSlots, this, &MainWindow::getSlots);
-    connect(this, &MainWindow::setSlots, calc, &CalculateMainWindow::getSlots);
 
-    //connect(this, SIGNAL(setSlots()), widlist.at(0), SLOT(getSlots()));
-    //connect(widlist.at(0), SIGNAL(setSlots(QList<void (*widlist.at(0)::*)()>)), this, SLOT(getSlots(QList<void (*widlist.at(0)::*)()>)));
+}
 
-
+void MainWindow::makeConnectionForOutapp(QObject *app)
+{
+    connect(this, SIGNAL(getParent()), app, SLOT(parent()));
+    connect(app, SIGNAL(sendParent(QObject*)), this, SLOT(takeparent(QObject*)));
+    connect(this, SIGNAL(createaction(QString)), app, SLOT(action(QString)));
+    connect(app, SIGNAL(sendAction(QAction*)), this, SLOT(takeaction(QAction*)));
 }
 
 MainWindow::~MainWindow()
@@ -179,21 +192,19 @@ void MainWindow::menuActions()
     }
     if(action->text() == "Калькулятор")
     {
-        if(calc->isHidden())
-        {
-            emit setSlots();
-            ui->tabWidget->addTab(calc, "Калькулятор");
-            ui->tabWidget->setCurrentWidget(calc);
-            QMenu *menu = new QMenu(NULL);
-            ui->menubar->addMenu(AddAppMenu(0,menu,"Calculate"));
-
-        }
+        ui->tabWidget->addTab(calc, "Калькулятор");
+        ui->tabWidget->setCurrentWidget(calc);
+        makeConnectionForOutapp(calc);
+        QMenu *menu = new QMenu(NULL);
+        ui->menubar->addMenu(AddAppMenu(NULL, menu));
     }
-    if(action->text() == "Ввести 7")
+    if(action->text() == "ВПО")
     {
-        connect(this, &MainWindow::otherAppMenuAction, calc, foreignSlots.at(0));
-        emit otherAppMenuAction(action->text());
-
+        ui->tabWidget->addTab(OA, "ВПО");
+        ui->tabWidget->setCurrentWidget(OA);
+        makeConnectionForOutapp(OA);
+        QMenu *menu = new QMenu(NULL);
+        ui->menubar->addMenu(AddAppMenu(NULL, menu));
     }
 }
 
@@ -342,6 +353,56 @@ QMenu *MainWindow::AddAppMenu(int ID, QMenu *menu, QString appname)
     return menu;
 }
 
+void MainWindow::takeparent(QObject * parent)
+{
+    outerparent = parent;
+}
+
+void MainWindow::takeaction(QAction *action)
+{
+    outeraction = action;
+}
+
+QList<QString> alredyIn;
+QMenu *MainWindow::AddAppMenu(QString child, QMenu *menu)
+{
+    QList<QObject> childrens;
+    emit getParent();
+    if(child == NULL)
+    {
+        childrens = outerparent->findChildren<QObject>(QRegularExpression("^(?!.*/).*$"));
+        menu = new QMenu(childrens.at(0).objectName());
+    }
+    else
+        childrens = outerparent->findChildren<QObject>(QRegularExpression(child + "/"));
+
+    for(int i = 0; i < childrens.size(); i++)
+    {
+        if(!isIn(alredyIn, childrens.at(i).objectName()))
+        {
+            QList<QString> childIr = childrens.at(i).objectName().split("/");
+            if(childIr.at(childIr.size() - 1) != "")
+            {
+                alredyIn.append(childrens.at(i).objectName());
+                QMenu *menu2 = new QMenu(childIr.at(childIr.size() - 1));
+                QString Menu = childrens.at(i).objectName();
+                if(menu->title() != childrens.at(i).objectName())
+                    menu->addMenu(AddAppMenu(childrens.at(i).objectName(), menu2));
+                else
+                    menu = AddAppMenu(childrens.at(i).objectName(), menu2);
+            }
+            else
+            {
+                alredyIn.append(childrens.at(i).objectName());
+                createaction(childIr.at(childIr.size() - 2));
+                //QAction *action = new QAction(childIr.at(childIr.size() - 2), this);
+                menu->addAction(outeraction);
+            }
+        }
+    }
+    return menu;
+}
+
 void MainWindow::StartCreateMenu()
 {
     QSqlQuery *menubarq = new QSqlQuery(db);
@@ -406,7 +467,3 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     StartCreateMenu(rolelist);
 }
 
-void MainWindow::getSlots(QList<void (CalculateMainWindow::*)()> calcSlots)
-{
-    foreignSlots = calcSlots;
-}
